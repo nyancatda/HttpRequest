@@ -18,6 +18,10 @@ import (
 
 func main() {
 	Body, HttpResponse, err := HttpRequest.GetRequest("https://github.com", []string{"Accept-Language:en-US,en;q=0.5"})
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	fmt.Println(Body, HttpResponse, err)
 }
 ```
