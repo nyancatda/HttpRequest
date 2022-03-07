@@ -1,7 +1,7 @@
 /*
  * @Author: NyanCatda
  * @Date: 2022-02-09 20:30:52
- * @LastEditTime: 2022-02-09 20:34:32
+ * @LastEditTime: 2022-03-07 13:13:52
  * @LastEditors: NyanCatda
  * @Description: Get请求方法封装
  * @FilePath: \HttpRequest\Get.go
@@ -22,8 +22,8 @@ import (
  * @return {*http.Response} 请求响应信息
  * @return {error} Error
  */
-func GetRequest(url string, Header []string) ([]byte, *http.Response, error) {
-	req, err := http.NewRequest("GET", url, nil)
+func GetRequest(URL string, Header []string) ([]byte, *http.Response, error) {
+	req, err := http.NewRequest("GET", URL, nil)
 	if err != nil {
 		return nil, nil, err
 	}
