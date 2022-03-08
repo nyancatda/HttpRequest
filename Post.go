@@ -1,7 +1,7 @@
 /*
  * @Author: NyanCatda
  * @Date: 2022-02-09 20:30:52
- * @LastEditTime: 2022-03-07 13:11:51
+ * @LastEditTime: 2022-03-08 20:11:44
  * @LastEditors: NyanCatda
  * @Description: Post请求方法封装
  * @FilePath: \HttpRequest\Post.go
@@ -91,17 +91,20 @@ func PostRequestXWWWForm(URL string, Header []string, Data map[string]string) ([
 }
 
 /**
- * @description: POST请求封装，传递multipart/form-data
+ * @description: POST请求封装，带文件传递multipart/form-data
  * @param {string} URL 请求地址
- * @param {[]string} Header 请求头
+ * @param {[]string} Header	请求头
+ * @param {map[string]string} Data 请求数据
+ * @param {string} FileKey 文件参数key
  * @param {[]string} FilePath 文件路径组
  * @return {*}
  */
-func PostRequestFormData(URL string, Header []string, FilePath []string) ([]byte, *http.Response, error) {
+func PostRequestFormDataFile(URL string, Header []string, Data map[string]string, FileKey string, FilePath []string) ([]byte, *http.Response, error) {
 	client := http.Client{}
 	bodyBuf := &bytes.Buffer{}
 	bodyWrite := multipart.NewWriter(bodyBuf)
 
+	//写入文件
 	for _, val := range FilePath {
 		file, err := os.Open(val)
 		if err != nil {
@@ -109,7 +112,7 @@ func PostRequestFormData(URL string, Header []string, FilePath []string) ([]byte
 		}
 		defer file.Close()
 
-		fileWrite, err := bodyWrite.CreateFormFile("file", val)
+		fileWrite, err := bodyWrite.CreateFormFile(FileKey, val)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -118,6 +121,12 @@ func PostRequestFormData(URL string, Header []string, FilePath []string) ([]byte
 			return nil, nil, err
 		}
 	}
+
+	//写入其他参数
+	for key, val := range Data {
+		_ = bodyWrite.WriteField(key, val)
+	}
+
 	// 将w.w.boundary刷写到w.writer中
 	bodyWrite.Close()
 
@@ -135,6 +144,43 @@ func PostRequestFormData(URL string, Header []string, FilePath []string) ([]byte
 	contentType := bodyWrite.FormDataContentType()
 	req.Header.Set("Content-Type", contentType)
 
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return body, resp, err
+}
+
+/**
+ * @description: POST请求封装，传递multipart/form-data
+ * @param {string} URL 请求地址
+ * @param {[]string} Header 请求头
+ * @param {map[string]string} Data 请求数据
+ * @return {*}
+ */
+func PostRequestFormData(URL string, Header []string, Data map[string]string) ([]byte, *http.Response, error) {
+	client := http.Client{}
+
+	bodyBuf := &bytes.Buffer{}
+	bodyWrite := multipart.NewWriter(bodyBuf)
+
+	//写入参数
+	for key, val := range Data {
+		_ = bodyWrite.WriteField(key, val)
+	}
+	bodyWrite.Close()
+
+	req, err := http.NewRequest(http.MethodPost, URL, bodyBuf)
+	if err != nil {
+		return nil, nil, err
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, nil, err
