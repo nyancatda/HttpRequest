@@ -1,7 +1,7 @@
 /*
  * @Author: NyanCatda
  * @Date: 2022-02-09 20:30:52
- * @LastEditTime: 2022-03-27 02:51:41
+ * @LastEditTime: 2022-03-27 02:52:50
  * @LastEditors: NyanCatda
  * @Description: Post请求方法封装
  * @FilePath: \HttpRequest\Post.go
@@ -194,6 +194,17 @@ func PostRequestFormData(URL string, Header []string, Data map[string]string) ([
 	if err != nil {
 		return nil, nil, err
 	}
+
+	// 设置请求头
+	for _, value := range Header {
+		Headervalue := strings.Split(value, ":")
+		// 如果解析失败则不设置请求头
+		if len(Headervalue) <= 0 {
+			return nil, nil, errors.New("Header Error")
+		}
+		req.Header.Set(Headervalue[0], Headervalue[1])
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, nil, err
