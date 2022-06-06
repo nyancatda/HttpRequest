@@ -1,7 +1,7 @@
 /*
  * @Author: NyanCatda
  * @Date: 2022-02-09 20:30:52
- * @LastEditTime: 2022-03-27 02:52:50
+ * @LastEditTime: 2022-06-06 12:44:45
  * @LastEditors: NyanCatda
  * @Description: Post请求方法封装
  * @FilePath: \HttpRequest\Post.go
@@ -46,7 +46,12 @@ func PostRequestJson(URL string, Header []string, requestBody string) ([]byte, *
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	client := &http.Client{}
+	client := &http.Client{
+		Transport: &http.Transport{
+			// 从环境变量中获取代理
+			Proxy: http.ProxyFromEnvironment,
+		},
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, nil, err
@@ -88,7 +93,12 @@ func PostRequestXWWWForm(URL string, Header []string, Data map[string]string) ([
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	client := http.Client{}
+	client := http.Client{
+		Transport: &http.Transport{
+			// 从环境变量中获取代理
+			Proxy: http.ProxyFromEnvironment,
+		},
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, nil, err
@@ -109,7 +119,6 @@ func PostRequestXWWWForm(URL string, Header []string, Data map[string]string) ([
  * @return {*}
  */
 func PostRequestFormDataFile(URL string, Header []string, Data map[string]string, FileKey string, FilePath []string) ([]byte, *http.Response, error) {
-	client := http.Client{}
 	bodyBuf := &bytes.Buffer{}
 	bodyWrite := multipart.NewWriter(bodyBuf)
 
@@ -157,6 +166,13 @@ func PostRequestFormDataFile(URL string, Header []string, Data map[string]string
 	contentType := bodyWrite.FormDataContentType()
 	req.Header.Set("Content-Type", contentType)
 
+	client := http.Client{
+		Transport: &http.Transport{
+			// 从环境变量中获取代理
+			Proxy: http.ProxyFromEnvironment,
+		},
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, nil, err
@@ -179,8 +195,6 @@ func PostRequestFormDataFile(URL string, Header []string, Data map[string]string
  * @return {*}
  */
 func PostRequestFormData(URL string, Header []string, Data map[string]string) ([]byte, *http.Response, error) {
-	client := http.Client{}
-
 	bodyBuf := &bytes.Buffer{}
 	bodyWrite := multipart.NewWriter(bodyBuf)
 
@@ -203,6 +217,13 @@ func PostRequestFormData(URL string, Header []string, Data map[string]string) ([
 			return nil, nil, errors.New("Header Error")
 		}
 		req.Header.Set(Headervalue[0], Headervalue[1])
+	}
+
+	client := http.Client{
+		Transport: &http.Transport{
+			// 从环境变量中获取代理
+			Proxy: http.ProxyFromEnvironment,
+		},
 	}
 
 	resp, err := client.Do(req)
