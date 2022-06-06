@@ -1,7 +1,7 @@
 /*
  * @Author: NyanCatda
  * @Date: 2022-02-09 20:30:52
- * @LastEditTime: 2022-03-27 02:51:55
+ * @LastEditTime: 2022-06-06 12:42:35
  * @LastEditors: NyanCatda
  * @Description: Get请求方法封装
  * @FilePath: \HttpRequest\Get.go
@@ -38,7 +38,12 @@ func GetRequest(URL string, Header []string) ([]byte, *http.Response, error) {
 		req.Header.Set(Headervalue[0], Headervalue[1])
 	}
 
-	client := &http.Client{}
+	client := &http.Client{
+		Transport: &http.Transport{
+			// 从环境变量中获取代理
+			Proxy: http.ProxyFromEnvironment,
+		},
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, nil, err
