@@ -1,7 +1,7 @@
 /*
  * @Author: NyanCatda
  * @Date: 2022-02-09 20:30:52
- * @LastEditTime: 2022-06-06 12:44:45
+ * @LastEditTime: 2022-06-21 12:57:36
  * @LastEditors: NyanCatda
  * @Description: Post请求方法封装
  * @FilePath: \HttpRequest\Post.go
@@ -37,7 +37,7 @@ func PostRequestJson(URL string, Header []string, requestBody string) ([]byte, *
 	}
 
 	for _, value := range Header {
-		Headervalue := strings.Split(value, ":")
+		Headervalue := strings.SplitN(value, ":", 2)
 		// 如果解析失败则不设置请求头
 		if len(Headervalue) <= 0 {
 			return nil, nil, errors.New("Header Error")
@@ -83,7 +83,7 @@ func PostRequestXWWWForm(URL string, Header []string, Data map[string]string) ([
 	}
 
 	for _, value := range Header {
-		Headervalue := strings.Split(value, ":")
+		Headervalue := strings.SplitN(value, ":", 2)
 		// 如果解析失败则不设置请求头
 		if len(Headervalue) <= 0 {
 			return nil, nil, errors.New("Header Error")
@@ -156,7 +156,7 @@ func PostRequestFormDataFile(URL string, Header []string, Data map[string]string
 
 	// 设置请求头
 	for _, value := range Header {
-		Headervalue := strings.Split(value, ":")
+		Headervalue := strings.SplitN(value, ":", 2)
 		// 如果解析失败则不设置请求头
 		if len(Headervalue) <= 0 {
 			return nil, nil, errors.New("Header Error")
@@ -211,7 +211,7 @@ func PostRequestFormData(URL string, Header []string, Data map[string]string) ([
 
 	// 设置请求头
 	for _, value := range Header {
-		Headervalue := strings.Split(value, ":")
+		Headervalue := strings.SplitN(value, ":", 2)
 		// 如果解析失败则不设置请求头
 		if len(Headervalue) <= 0 {
 			return nil, nil, errors.New("Header Error")

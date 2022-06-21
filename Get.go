@@ -1,7 +1,7 @@
 /*
  * @Author: NyanCatda
  * @Date: 2022-02-09 20:30:52
- * @LastEditTime: 2022-06-06 12:42:35
+ * @LastEditTime: 2022-06-21 12:56:26
  * @LastEditors: NyanCatda
  * @Description: Get请求方法封装
  * @FilePath: \HttpRequest\Get.go
@@ -30,7 +30,7 @@ func GetRequest(URL string, Header []string) ([]byte, *http.Response, error) {
 	}
 
 	for _, value := range Header {
-		Headervalue := strings.Split(value, ":")
+		Headervalue := strings.SplitN(value, ":", 2)
 		// 如果解析失败则不设置请求头
 		if len(Headervalue) <= 0 {
 			return nil, nil, errors.New("Header Error")
